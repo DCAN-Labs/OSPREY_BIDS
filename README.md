@@ -2,6 +2,7 @@
 # Osprey-BIDS
 
 [![Documentation Status](https://readthedocs.org/projects/osprey-bids/badge/?version=latest)](https://osprey-bids.readthedocs.io/en/latest/)
+[![DOI](https://zenodo.org/badge/511561432.svg)](https://zenodo.org/doi/10.5281/zenodo.13367655)
 
 This project is a derivative of [Osprey](https://schorschinho.github.io/osprey/), an open-source tool designed to facilitate the use of Magnetic Resonance Spectroscopy (MRS) data in the Brain Imaging Data Structure (BIDS) format. This derivative tool extends the original functionalities to better facilitate automated processing of BIDS-formatted MRS data, and to allow localizer registration for aligning the MRS voxel high-resolution T1w/T2w images.
 
@@ -18,10 +19,3 @@ This project is based on [Osprey](https://schorschinho.github.io/osprey/), which
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
-
-## DOI
-
-[![DOI](https://zenodo.org/badge/511561432.svg)](https://zenodo.org/doi/10.5281/zenodo.13367655)
-
-
-Please see the ReadTheDocs page for documentation details: https://osprey-bids.readthedocs.io/en/latest/
