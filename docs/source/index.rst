@@ -6,6 +6,9 @@
 Welcome to OSPREY_BIDS's documentation!
 =======================================
 
+.. image:: https://zenodo.org/badge/197683508.svg
+  :target: https://doi.org/10.5281/zenodo.14226196
+
 This tool is used in the Healthy Brain and Child Development (HBCD) study
 for processing magnetic resonance spectroscopy (MRS) data. The tool acts 
 as a BIDS extension to the `OSPREY <https://github.com/schorschinho/osprey>`_ pipeline.
