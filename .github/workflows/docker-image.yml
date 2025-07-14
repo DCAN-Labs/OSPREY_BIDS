@@ -25,9 +25,10 @@ jobs:
       - name: Build Docker image
         run: |
           IMAGE_TAG=${{ github.event.release.tag_name }}     # e.g. v1.2.3
-          IMAGE_NAME=osprey-bids:$IMAGE_TAG
+          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/osprey-bids:$IMAGE_TAG
           docker build -f Dockerfile -t "$IMAGE_NAME" .
 
       - name: Push image
         run: |
-          docker push osprey-bids:${{ github.event.release.tag_name }}
+          docker push "${{ secrets.DOCKERHUB_USERNAME }}/osprey-bids:${{ github.event.release.tag_name }}"
+
