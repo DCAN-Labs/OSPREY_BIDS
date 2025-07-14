@@ -30,4 +30,4 @@ jobs:
 
       - name: Push image
         run: |
-          docker push my-image-name:${{ github.event.release.tag_name }}
+          docker push osprey-bids:${{ github.event.release.tag_name }}
