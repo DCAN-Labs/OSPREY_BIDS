@@ -426,13 +426,13 @@ def main():
 
             
             print('Preferred anatomical modality is: ' + args.preferred_anat_modality)
-            if preferred_anat_modality != 'none':
+            if args.preferred_anat_modality != 'none':
                 if (len(t1w_anats) + len(t2w_anats)) == 0:
                     print('No T1w or T2w image found for ' + session_path + ', skipping processing for current session.\n')
                     continue
 
             #If no anat is going to be used
-            elif preferred_anat_modality == 'none':
+            elif args.preferred_anat_modality == 'none':
                 print('Not populating anats_dict since preferred_anat_modality is set to none.')
 
             #If T1w is the preferred anatomical reference modality
@@ -464,7 +464,7 @@ def main():
             #Grab segmentation
             if isinstance(segmentation_dir, type(None)) == False:
 
-                if preferred_anat_modality == 'none':
+                if args.preferred_anat_modality == 'none':
                     raise ValueError('Error: if preferred_anat_modality is set to none, a segmentation directory should not be provided.')
                 
                 #First look for CABINET output in T2 space
@@ -525,7 +525,7 @@ def main():
                 #Grab all localizer scans within the current session and organize them into groups based on SeriesNumber
                 if use_localizer:
 
-                    if preferred_anat_modality == 'none':
+                    if args.preferred_anat_modality == 'none':
                         raise ValueError('Error: if preferred_anat_modality is set to none, localizer registration should not be enables.')
                     
                     localizer_imgs = glob.glob(os.path.join(session_path, 'anat/{}'.format(args.localizer_search_term)))
