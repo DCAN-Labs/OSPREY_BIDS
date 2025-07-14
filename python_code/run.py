@@ -287,7 +287,13 @@ def build_parser():
     parser.add_argument('--segmentation_dir', '--segmentation-dir', help="The path to the folder where segmentations are stored (this is the same for all subjects)", type=str)
     parser.add_argument('--localizer_registration', '--localizer-registration', help="OPTIONAL: Use localizer to register anatomical images to MRS scan. Also requires the use of --segmentation_dir argument", action='store_true')
     parser.add_argument('--localizer_search_term', '--localizer-search-term', help="OPTIONAL: The search term to use to find localizer images (i.e. *localizer*)", type=str, default='*localizer*.nii*')
-    parser.add_argument('--preferred_anat_modality', '--preferred-anat-modality', help="OPTIONAL: The preferred modality to use for anatomical images (i.e. T1w or T2w)", type=str, default='T2w')
+    parser.add_argument(
+        '--preferred_anat_modality', '--preferred-anat-modality',
+        help="OPTIONAL: The preferred modality to use for anatomical images (must be one of: T1w, T2w, none). If set to none, no anatomical information will be used in processing. This can be of interest for QC purposes.",
+        type=str,
+        choices=['T1w', 'T2w', 'none'],
+        default='T2w'
+    )
     parser.add_argument('--terms_not_allowed_in_anat', nargs='+', help='One or more terms (seperated by spaces) that are not allowed in the file name of high-res anatomical reference images. Useful for getting rid of localizer images that can be confused for high-res anatomical scans. example - "--terms_not_allowed_in_anat mrs ax coronal"', required=False)
     parser.add_argument('--require_same_mrs_localizer_suid', help='If activated, OSPREY will only try to match MRS scans with localizers if the StudyInstanceUID field in the BIDS JSON matches across the localizer/mrs images. Note: if the StudyInstanceUID is undefined for the MRS acquisition, denoted by a value of None, then a localizer will be chosen without taking the StudyInstanceUID into account.', action='store_true')
     
@@ -321,9 +327,6 @@ def main():
     json_settings = args.json_settings
     if os.path.isabs(json_settings) == False:
         json_settings = os.path.join(cwd, json_settings)
-
-    if args.preferred_anat_modality not in ['T1w', 'T2w']:
-        raise ValueError('Error: preferred_anat_modality must be T1w or T2w, but program received: ' + args.preferred_anat_modality)
 
     if args.require_same_mrs_localizer_suid:
         require_suid = True
@@ -423,9 +426,14 @@ def main():
 
             
             print('Preferred anatomical modality is: ' + args.preferred_anat_modality)
-            if (len(t1w_anats) + len(t2w_anats)) == 0:
-                print('No T1w or T2w image found for ' + session_path + ', skipping processing for current session.\n')
-                continue
+            if preferred_anat_modality != 'none':
+                if (len(t1w_anats) + len(t2w_anats)) == 0:
+                    print('No T1w or T2w image found for ' + session_path + ', skipping processing for current session.\n')
+                    continue
+
+            #If no anat is going to be used
+            elif preferred_anat_modality == 'none':
+                print('Not populating anats_dict since preferred_anat_modality is set to none.')
 
             #If T1w is the preferred anatomical reference modality
             elif args.preferred_anat_modality == 'T1w':
@@ -455,6 +463,9 @@ def main():
 
             #Grab segmentation
             if isinstance(segmentation_dir, type(None)) == False:
+
+                if preferred_anat_modality == 'none':
+                    raise ValueError('Error: if preferred_anat_modality is set to none, a segmentation directory should not be provided.')
                 
                 #First look for CABINET output in T2 space
 
@@ -513,6 +524,10 @@ def main():
 
                 #Grab all localizer scans within the current session and organize them into groups based on SeriesNumber
                 if use_localizer:
+
+                    if preferred_anat_modality == 'none':
+                        raise ValueError('Error: if preferred_anat_modality is set to none, localizer registration should not be enables.')
+                    
                     localizer_imgs = glob.glob(os.path.join(session_path, 'anat/{}'.format(args.localizer_search_term)))
                     if len(localizer_imgs) == 0:
                         print('No localizer images found for ' + session_path + ', skipping processing for current session.')
