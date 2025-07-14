@@ -2,8 +2,8 @@ name: Build Docker image for tags
 
 on:
   push:
-    tags:
-      - '*'          # run on every tag push
+    release:
+      types: [created]          # run on every tag push
   workflow_dispatch:  # allow manual runs
 
 jobs:
