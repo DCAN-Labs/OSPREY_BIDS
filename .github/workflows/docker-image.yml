@@ -1,16 +1,16 @@
-name: Build Docker image for tags
+name: Build & push Docker image on release
 
 on:
-  push:
-    release:
-      types: [created]          # run on every tag push
-  workflow_dispatch:  # allow manual runs
+  release:
+    types: [published, prereleased]   # fire on releases and prereleases
+  workflow_dispatch:                  # manual trigger if needed
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check out code
+      - name: Check out repository
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
@@ -24,9 +24,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          IMAGE_TAG=${{ github.ref_name }}    # e.g. v1.2.3
+          IMAGE_TAG=${{ github.event.release.tag_name }}     # e.g. v1.2.3
           IMAGE_NAME=my-image-name:$IMAGE_TAG
-          docker build -f Dockerfile -t $IMAGE_NAME .
+          docker build -f Dockerfile -t "$IMAGE_NAME" .
 
       - name: Push image
-        run: docker push my-image-name:${{ github.ref_name }}
+        run: |
+          docker push my-image-name:${{ github.event.release.tag_name }}
