@@ -426,10 +426,9 @@ def main():
 
             
             print('Preferred anatomical modality is: ' + args.preferred_anat_modality)
-            if args.preferred_anat_modality != 'none':
-                if (len(t1w_anats) + len(t2w_anats)) == 0:
-                    print('No T1w or T2w image found for ' + session_path + ', skipping processing for current session.\n')
-                    continue
+            if (args.preferred_anat_modality != 'none') and ((len(t1w_anats) + len(t2w_anats)) == 0):
+                print('No T1w or T2w image found for ' + session_path + ', skipping processing for current session.\n')
+                continue
 
             #If no anat is going to be used
             elif args.preferred_anat_modality == 'none':
